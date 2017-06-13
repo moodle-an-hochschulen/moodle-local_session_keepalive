@@ -1,6 +1,8 @@
 moodle-local_session_keepalive
 ==============================
 
+[![Build Status](https://travis-ci.org/moodleuulm/moodle-local_session_keepalive.svg?branch=master)](https://travis-ci.org/moodleuulm/moodle-local_session_keepalive)
+
 Moodle plugin which checks for unsent user input in the browser and keeps the user session alive as long as needed to prevent that user input which is sent to the server after the user session has expired will be lost
 
 
