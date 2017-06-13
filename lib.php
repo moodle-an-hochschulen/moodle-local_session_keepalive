@@ -31,7 +31,7 @@ defined('MOODLE_INTERNAL') || die();
  * @param global_navigation $navigation
  */
 function local_session_keepalive_extend_navigation(global_navigation $navigation) {
-    global $CFG, $PAGE, $USER;
+    global $PAGE, $USER;
 
     // Fetch local_session_keepalive config.
     $config = get_config('local_session_keepalive');

@@ -19,17 +19,6 @@ define(['jquery', 'core/config', 'core/log'], function($, config, log) {
     var dirty = false;
 
     /**
-     * Function which performs the continuous keepalive check.
-     */
-    function checkKeepAlive() {
-        // If the page is currently marked dirty.
-        if (dirty == true) {
-            // Keep the Moodle session of this user alive.
-            doKeepAlive();
-        }
-    }
-
-    /**
      * Function to tell the server to keep the session alive.
      */
     function doKeepAlive() {
@@ -50,25 +39,39 @@ define(['jquery', 'core/config', 'core/log'], function($, config, log) {
                 'Cache-Control': 'no-cache',
                 'Expires': '-1'
             },
+            /* This section exists for understanding the code, but it is commented because it does nothing.
             success: function(result) {
                 // The AJAX call was successful.
                 if (result.status == 200) {
                     // Don't care about the result (especially as there isn't any result sent back).
                 }
             },
+            */
             error: function(request) {
                 // The AJAX call returned 403, we have to assume that the session was terminated and can't be kept alive anymore.
                 if (request.status == 403) {
                     // Stop doing any more requests.
                     clearInterval(keepaliveInterval);
-                }
-                // The AJAX call was cached somewhere.
-                else if (request.status >= 300 && request.status <= 399) {
+
+                    // The AJAX call was cached somewhere.
+                } else if (request.status >= 300 && request.status <= 399) {
                     // Warn the developer, but don't do anything else.
-                    log.debug('moodle-local_session_keepalive-keepalive: A cached copy of the keepalive answer was returned so it\'s reliablity cannot be guaranteed');
+                    log.debug('moodle-local_session_keepalive-keepalive: ' +
+                            'A cached copy of the keepalive answer was returned so it\'s reliablity cannot be guaranteed');
                 }
             }
         });
+    }
+
+    /**
+     * Function which performs the continuous keepalive check.
+     */
+    function checkKeepAlive() {
+        // If the page is currently marked dirty.
+        if (dirty === true) {
+            // Keep the Moodle session of this user alive.
+            doKeepAlive();
+        }
     }
 
     /**
