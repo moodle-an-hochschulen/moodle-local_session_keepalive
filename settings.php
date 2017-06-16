@@ -46,9 +46,15 @@ if ($hassiteconfig) {
 
         // Create keepalive interval control widget.
         $choices = array(10 => 10, 30 => 30, 60 => 60, 90 => 90, 120 => 120, 180 => 180, 240 => 240, 300 => 300);
+        $sessionhandlingurl = new \moodle_url('/admin/settings.php', array('section' => 'sessionhandling'));
+        $link = \html_writer::link($sessionhandlingurl, get_string('sessionhandling', 'core_admin'));
+        $sessiontimeoutmin = ($CFG->sessiontimeout / 60);
         $page->add(new admin_setting_configselect('local_session_keepalive/keepaliveinterval',
                 get_string('setting_keepaliveinterval', 'local_session_keepalive', null, true),
-                get_string('setting_keepaliveinterval_desc', 'local_session_keepalive', ($CFG->sessiontimeout / 60), true),
+                get_string('setting_keepaliveinterval_desc',
+                        'local_session_keepalive',
+                        array('minutes' => $sessiontimeoutmin, 'page' => $link),
+                        true),
                 60,
                 $choices));
         unset($choices);
