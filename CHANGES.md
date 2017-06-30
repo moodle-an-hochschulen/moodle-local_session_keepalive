@@ -4,7 +4,7 @@ moodle-local_session_keepalive
 Changes
 -------
 
-### Unreleased
+### v3.2-r4
 
 * 2017-06-30 - Improvement: Add really short keepalive intervals - Credits to Alexey Lustin
 
