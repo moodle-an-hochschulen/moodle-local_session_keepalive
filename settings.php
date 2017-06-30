@@ -45,7 +45,7 @@ if ($hassiteconfig) {
                 0));
 
         // Create keepalive interval control widget.
-        $choices = array(10 => 10, 30 => 30, 60 => 60, 90 => 90, 120 => 120, 180 => 180, 240 => 240, 300 => 300);
+        $choices = array(1 => 1, 10 => 10, 30 => 30, 60 => 60, 90 => 90, 120 => 120, 180 => 180, 240 => 240, 300 => 300);
         $sessionhandlingurl = new \moodle_url('/admin/settings.php', array('section' => 'sessionhandling'));
         $link = \html_writer::link($sessionhandlingurl, get_string('sessionhandling', 'core_admin'));
         $sessiontimeoutmin = ($CFG->sessiontimeout / 60);
