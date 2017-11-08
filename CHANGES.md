@@ -4,6 +4,10 @@ moodle-local_session_keepalive
 Changes
 -------
 
+### Unreleased
+
+* 2017-11-08 - Updated travis.yml to use newer node version for fixing TravisCI error.
+
 ### v3.2-r4
 
 * 2017-06-30 - Improvement: Add really short keepalive intervals - Credits to Alexey Lustin
