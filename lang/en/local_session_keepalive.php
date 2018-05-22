@@ -26,6 +26,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['pluginname'] = 'Session keepalive';
+$string['privacy:metadata'] = 'The session keepalive plugin provides extended functionality to Moodle users, but does not store any personal data.';
 $string['setting_advancedsettingsheading'] = 'Advanced settings';
 $string['setting_enable'] = 'Enable session keepalive';
 $string['setting_enable_desc'] = 'With this setting, you can enable session keepalive. As long as session keepalive is not enabled, this plugin does not do anything and user sessions expire normally. This means that user input which is sent to the server after the user session has expired will be lost. As soon as this feature is enabled, the plugin will keep the session alive as long as needed.';
