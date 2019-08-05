@@ -28,5 +28,5 @@ defined('MOODLE_INTERNAL') || die();
 $plugin->component = 'local_session_keepalive';
 $plugin->version = 2019012800;
 $plugin->release = 'v3.6-r1';
-$plugin->requires = 2018120300;
+$plugin->requires = 2019052000;
 $plugin->maturity = MATURITY_STABLE;
