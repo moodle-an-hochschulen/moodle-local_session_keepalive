@@ -26,7 +26,7 @@ define(['jquery', 'core/config', 'core/log'], function($, config, log) {
         // We know about the benefits of the core/ajax module (https://docs.moodle.org/dev/AJAX),
         // but for this very lightweight request we only use a simple jQuery AJAX call.
         $.ajax({
-            url: config.wwwroot + '/lib/sessionkeepalive_ajax.php',
+            url: config.wwwroot + '/local/session_keepalive/sessionkeepalive_ajax.php',
             dataType: 'json',
             type: 'POST',
             data: {
