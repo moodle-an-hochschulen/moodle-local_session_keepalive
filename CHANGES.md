@@ -4,6 +4,10 @@ moodle-local_session_keepalive
 Changes
 -------
 
+### Unreleased
+
+* 2020-02-26 - Prepare compatibility for Moodle 3.8.
+
 ### v3.7-r1
 
 * 2019-08-05 - Added Behat tests.

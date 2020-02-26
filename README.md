@@ -9,7 +9,7 @@ Moodle plugin which checks for unsent user input in the browser and keeps the us
 Requirements
 ------------
 
-This plugin requires Moodle 3.7+
+This plugin requires Moodle 3.8+
 
 
 Motivation for this plugin
