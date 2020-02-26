@@ -4,7 +4,7 @@ moodle-local_session_keepalive
 Changes
 -------
 
-### Unreleased
+### v3.8-r1
 
 * 2020-02-26 - Fix a behat test and added some details to the plugin settings page after the 'Extend session' popup was introduced upstream in MDL-34498.
 * 2020-02-26 - Ship the simple Ajax endpoint sessionkeepalive_ajax.php with this plugin as it was removed upstream in MDL-34498.
