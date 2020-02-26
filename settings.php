@@ -55,6 +55,11 @@ if ($hassiteconfig) {
                 get_string('setting_keepaliveinterval_desc',
                         'local_session_keepalive',
                         array('minutes' => $sessiontimeoutmin, 'page' => $link),
+                        true).
+                '<br /><br />'.
+                get_string('setting_keepaliveintervalpopupnote',
+                        'local_session_keepalive',
+                        array('minutes' => floor($sessiontimeoutmin * 0.9)),
                         true),
                 60,
                 $choices));

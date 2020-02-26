@@ -55,5 +55,9 @@ Feature: Using session keepalive
     And I click on "A forum" "link"
     And I click on "Add a new discussion topic" "link"
     And I wait "150" seconds
+    Then ".moodle-dialogue-confirm" "css_element" should exist
+    And I should see "No recent activity" in the ".moodle-dialogue-confirm" "css_element"
+    And I click on "Cancel" "button" in the ".moodle-dialogue-confirm" "css_element"
+    And ".moodle-dialogue-confirm" "css_element" should not be visible
     And I am on site homepage
-    Then I should see "You are not logged in"
+    And I should see "You are not logged in"
