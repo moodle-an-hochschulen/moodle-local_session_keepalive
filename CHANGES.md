@@ -4,6 +4,10 @@ moodle-local_session_keepalive
 Changes
 -------
 
+### Unreleased
+
+* 2020-09-01 - Prepare compatibility for Moodle 3.9.
+
 ### v3.8-r1
 
 * 2020-02-26 - Fix a behat test and added some details to the plugin settings page after the 'Extend session' popup was introduced upstream in MDL-34498.
