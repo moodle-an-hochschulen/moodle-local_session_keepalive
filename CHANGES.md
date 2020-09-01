@@ -6,6 +6,7 @@ Changes
 
 ### Unreleased
 
+* 2020-09-01 - Fixed broken Behat scenario due to upstream changes for modal dialogues.
 * 2020-09-01 - Prepare compatibility for Moodle 3.9.
 
 ### v3.8-r1
