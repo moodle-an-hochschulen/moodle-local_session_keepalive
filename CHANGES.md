@@ -4,7 +4,7 @@ moodle-local_session_keepalive
 Changes
 -------
 
-### Unreleased
+### v3.9-r1
 
 * 2020-09-01 - Fixed broken Behat scenario due to upstream changes for modal dialogues.
 * 2020-09-01 - Prepare compatibility for Moodle 3.9.
