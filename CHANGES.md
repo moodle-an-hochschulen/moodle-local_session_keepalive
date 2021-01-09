@@ -4,6 +4,10 @@ moodle-local_session_keepalive
 Changes
 -------
 
+### Unreleased
+
+* 2021-01-06 - Improvement: Declare which major stable version of Moodle this plugin supports (see MDL-59562 for details).
+
 ### v3.9-r1
 
 * 2020-09-01 - Fixed broken Behat scenario due to upstream changes for modal dialogues.
