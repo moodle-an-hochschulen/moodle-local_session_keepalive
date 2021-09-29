@@ -4,7 +4,7 @@ moodle-local_session_keepalive
 Changes
 -------
 
-### Unreleased
+### v3.10-r3
 
 * 2021-09-29 - Remove the deprecated print_error() function
 
