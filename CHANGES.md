@@ -4,6 +4,10 @@ moodle-local_session_keepalive
 Changes
 -------
 
+### Unreleased
+
+* 2021-10-26 - Prepare compatibility for Moodle 3.11
+
 ### v3.10-r3
 
 * 2021-09-29 - Remove the deprecated print_error() function
