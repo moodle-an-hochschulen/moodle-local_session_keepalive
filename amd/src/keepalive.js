@@ -1,7 +1,7 @@
 /**
  * Local plugin "Session keepalive" - JS Code
  *
- * @package   local_session_keepalive
+ * @module    local_session_keepalive/keepalive
  * @copyright 2017 Alexander Bias, University of Ulm <alexander.bias@uni-ulm.de>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
