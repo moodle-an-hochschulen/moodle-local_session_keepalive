@@ -6,8 +6,9 @@ Feature: Using session keepalive
 
   Background:
     Given the following config values are set as admin:
-      | config         | value |
-      | sessiontimeout | 120   |
+      | config                | value |
+      | sessiontimeout        | 120   |
+      | sessiontimeoutwarning | 60    |
     And the following "users" exist:
       | username |
       | teacher1 |
@@ -39,9 +40,14 @@ Feature: Using session keepalive
     And I set the following fields to these values:
       | Subject | Discussion subject |
       | Message | Discussion message |
-    And I wait "150" seconds
+    And I wait "80" seconds
+    Then ".modal" "css_element" should not exist
+    And I should not see "No recent activity"
+    And I wait "80" seconds
+    Then ".modal" "css_element" should not exist
+    And I should not see "Session expired"
     And I click on "Post to forum" "button"
-    Then I should see "Discussion subject"
+    And I should see "Discussion subject"
 
   Scenario: Enable plugin but do not enter anything in the form
     Given the following config values are set as admin:
@@ -54,9 +60,12 @@ Feature: Using session keepalive
       | Forum name | A forum |
     And I click on "A forum" "link"
     And I click on "Add a new discussion topic" "link"
-    And I wait "150" seconds
+    And I wait "80" seconds
     Then ".modal" "css_element" should exist
-    And I should see "No recent activity" in the ".modal" "css_element"
+    And I should see "No recent activity" in the ".modal .modal-title" "css_element"
+    And I wait "80" seconds
+    Then ".modal" "css_element" should exist
+    And I should see "Session expired" in the ".modal .modal-title" "css_element"
     And I click on "Cancel" "button" in the ".modal" "css_element"
     And ".modal" "css_element" should not be visible
     And I am on site homepage

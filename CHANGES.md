@@ -6,6 +6,7 @@ Changes
 
 ### Unreleased
 
+* 2021-12-05 - Fix Behat tests which broke in 3.11
 * 2021-10-26 - Prepare compatibility for Moodle 3.11
 
 ### v3.10-r3
