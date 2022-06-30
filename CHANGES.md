@@ -4,6 +4,10 @@ moodle-local_session_keepalive
 Changes
 -------
 
+### Unreleased
+
+* 2022-06-26 - Update maintainers and copyrights in README.md.
+
 ### v3.11-r1
 
 * 2021-12-05 - Fix Behat tests which broke in 3.11
