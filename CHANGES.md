@@ -4,6 +4,10 @@ moodle-local_session_keepalive
 Changes
 -------
 
+### Unreleased
+
+* 2022-07-10 - Add Capabilities section to README.md
+
 ### v3.9-r5
 
 * 2022-06-26 - Make codechecker happy again
