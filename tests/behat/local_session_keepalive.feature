@@ -35,8 +35,8 @@ Feature: Using session keepalive
     And I am on "Course 1" course homepage with editing mode on
     And I add a "Forum" to section "1" and I fill the form with:
       | Forum name | A forum |
-    And I click on "A forum" "link"
-    And I click on "Add a new discussion topic" "link"
+    And I am on the "A forum" "forum activity" page
+    And I click on "Add discussion topic" "link"
     And I set the following fields to these values:
       | Subject | Discussion subject |
       | Message | Discussion message |
@@ -58,8 +58,8 @@ Feature: Using session keepalive
     And I am on "Course 1" course homepage with editing mode on
     And I add a "Forum" to section "1" and I fill the form with:
       | Forum name | A forum |
-    And I click on "A forum" "link"
-    And I click on "Add a new discussion topic" "link"
+    And I am on the "A forum" "forum activity" page
+    And I click on "Add discussion topic" "link"
     And I wait "80" seconds
     Then ".modal" "css_element" should exist
     And I should see "No recent activity" in the ".modal .modal-title" "css_element"
