@@ -33,7 +33,7 @@ define(['jquery', 'core/config', 'core/log'], function($, config, log) {
                 // Add the session key.
                 'sesskey': config.sesskey,
                 // Add a query string to prevent older versions of IE from using the cache.
-                'time': $.now()
+                'time': Date.now()
             },
             headers: {
                 'Cache-Control': 'no-cache',
