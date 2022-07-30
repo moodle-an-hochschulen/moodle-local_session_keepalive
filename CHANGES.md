@@ -4,7 +4,7 @@ moodle-local_session_keepalive
 Changes
 -------
 
-### Unreleased
+### v4.0-r1
 
 * 2022-07-12 - $.now() is deprecated, replace with Date.now()
 * 2022-07-12 - Fix Behat tests which broke with Moodle 4.0
