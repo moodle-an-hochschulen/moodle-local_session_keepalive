@@ -6,6 +6,7 @@ Changes
 
 ### Unreleased
 
+* 2023-03-19 - Respect the sessiontimeoutwarning setting in the plugin settings description.
 * 2022-11-28 - Updated Moodle Plugin CI to latest upstream recommendations
 
 ### v3.11-r3
