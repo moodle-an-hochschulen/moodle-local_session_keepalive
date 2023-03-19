@@ -49,7 +49,8 @@ if ($hassiteconfig) {
                 120 => 120, 180 => 180, 240 => 240, 300 => 300);
         $sessionhandlingurl = new \moodle_url('/admin/settings.php', array('section' => 'sessionhandling'));
         $link = \html_writer::link($sessionhandlingurl, get_string('sessionhandling', 'core_admin'));
-        $sessiontimeoutmin = ($CFG->sessiontimeout / 60);
+        $sessiontimeoutmin = floor(($CFG->sessiontimeout / 60));
+        $sessiontimeoutwarningmin = floor(($CFG->sessiontimeoutwarning / 60));
         $page->add(new admin_setting_configselect('local_session_keepalive/keepaliveinterval',
                 get_string('setting_keepaliveinterval', 'local_session_keepalive', null, true),
                 get_string('setting_keepaliveinterval_desc',
@@ -57,9 +58,9 @@ if ($hassiteconfig) {
                         array('minutes' => $sessiontimeoutmin, 'page' => $link),
                         true).
                 '<br /><br />'.
-                get_string('setting_keepaliveintervalpopupnote',
+                get_string('setting_keepalivetimeoutwarningnote',
                         'local_session_keepalive',
-                        array('minutes' => floor($sessiontimeoutmin * 0.9)),
+                        array('minutes' => $sessiontimeoutwarningmin, 'page' => $link),
                         true),
                 60,
                 $choices));
