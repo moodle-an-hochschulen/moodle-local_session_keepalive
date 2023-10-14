@@ -4,6 +4,10 @@ moodle-local_session_keepalive
 Changes
 -------
 
+### Unreleased
+
+* 2023-10-10 - Updated Moodle Plugin CI to latest upstream recommendations
+
 ### v4.0-r2
 
 * 2023-03-19 - Respect the sessiontimeoutwarning setting in the plugin settings description.
