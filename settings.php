@@ -45,9 +45,9 @@ if ($hassiteconfig) {
                 0));
 
         // Create keepalive interval control widget.
-        $choices = array(1 => 1, 2 => 2, 5 => 5, 10 => 10, 30 => 30, 60 => 60, 90 => 90,
-                120 => 120, 180 => 180, 240 => 240, 300 => 300);
-        $sessionhandlingurl = new \moodle_url('/admin/settings.php', array('section' => 'sessionhandling'));
+        $choices = [1 => 1, 2 => 2, 5 => 5, 10 => 10, 30 => 30, 60 => 60, 90 => 90,
+                120 => 120, 180 => 180, 240 => 240, 300 => 300, ];
+        $sessionhandlingurl = new \moodle_url('/admin/settings.php', ['section' => 'sessionhandling']);
         $link = \html_writer::link($sessionhandlingurl, get_string('sessionhandling', 'core_admin'));
         $sessiontimeoutmin = floor(($CFG->sessiontimeout / 60));
         $sessiontimeoutwarningmin = floor(($CFG->sessiontimeoutwarning / 60));
@@ -55,12 +55,12 @@ if ($hassiteconfig) {
                 get_string('setting_keepaliveinterval', 'local_session_keepalive', null, true),
                 get_string('setting_keepaliveinterval_desc',
                         'local_session_keepalive',
-                        array('minutes' => $sessiontimeoutmin, 'page' => $link),
+                        ['minutes' => $sessiontimeoutmin, 'page' => $link],
                         true).
                 '<br /><br />'.
                 get_string('setting_keepalivetimeoutwarningnote',
                         'local_session_keepalive',
-                        array('minutes' => $sessiontimeoutwarningmin, 'page' => $link),
+                        ['minutes' => $sessiontimeoutwarningmin, 'page' => $link],
                         true),
                 60,
                 $choices));
@@ -72,7 +72,7 @@ if ($hassiteconfig) {
                 ''));
 
         // Create keepalive time control widgets.
-        $days = array('sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday');
+        $days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
         foreach ($days as $day) {
             $choices[$day] = get_string($day, 'calendar', null, false);
                     // Don't use string lazy loading here because the string will be directly used and
@@ -88,12 +88,12 @@ if ($hassiteconfig) {
                 'keepalivestartmin',
                 get_string('setting_keepalivestart', 'local_session_keepalive', null, true),
                 '',
-                array('h' => 0, 'm' => 0)));
+                ['h' => 0, 'm' => 0]));
         $page->add(new admin_setting_configtime('local_session_keepalive/keepaliveend',
                 'keepaliveendmin',
                 get_string('setting_keepaliveend', 'local_session_keepalive', null, true),
                 get_string('setting_keepaliveend_desc', 'local_session_keepalive', null, true),
-                array('h' => 0, 'm' => 0)));
+                ['h' => 0, 'm' => 0]));
     }
 
     // Add settings page to navigation tree.
