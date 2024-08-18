@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * Local plugin "Session keepalive" - Language pack
  *
@@ -36,7 +35,7 @@ $string['setting_keepaliveend_desc'] = 'With these two settings, you can control
 $string['setting_keepaliveinterval'] = 'Keepalive interval';
 $string['setting_keepaliveinterval_desc'] = 'With this setting, you can set the interval (in minutes) in which the users\' browsers will check for unsent user input and keep the session alive if needed. Even if this request is very lightweight on the server side, you shouldn\'t set the interval shorter as necessary because unnecessary short intervals, together with a large amount of concurrent active users, might generate perceivable additional load on your server. For normal Moodle setups, the default setting should be fine.<br>
 The interval is best set to half of the session timeout configured on the {$a->page} configuration page (currently set to {$a->minutes} minutes). Example: If the session timeout is set to 120 minutes, set the keepalive time to 60 minutes. The users\' browsers will then perform the first keepalive request 60 minutes after the page load which is still plenty of time before the session normally expires.';
-$string['setting_keepalivetimeoutwarningnote'] = 'Please note: Moodle core shows a popup to the user before his session lifetime is finally reached to give him the possibility to extend his session. The lead time is configurable on the {$a->page} page as well with the sessiontimeoutwarning setting. This plugin can nicely co-exist with this core functionality as long as you make sure that you set this setting to a considerable lower value than the configured timeout warning (currently set to {$a->minutes} minutes).';
 $string['setting_keepalivestart'] = 'Keepalive start time';
+$string['setting_keepalivetimeoutwarningnote'] = 'Please note: Moodle core shows a popup to the user before his session lifetime is finally reached to give him the possibility to extend his session. The lead time is configurable on the {$a->page} page as well with the sessiontimeoutwarning setting. This plugin can nicely co-exist with this core functionality as long as you make sure that you set this setting to a considerable lower value than the configured timeout warning (currently set to {$a->minutes} minutes).';
 $string['setting_keepaliveweekdays'] = 'Keepalive weekdays';
 $string['setting_keepaliveweekdays_desc'] = 'With this setting, you can control the weekdays when session keepalive should be active. By default, all weekdays are enabled. However, if you are sure that you will never need session keepalive on weekends or certain working days, you can disable these weekdays to save the load on the server side on these days.';
