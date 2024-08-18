@@ -24,11 +24,11 @@
  */
 
 define('AJAX_SCRIPT', true);
-// @codingStandardsIgnoreStart
+
+// phpcs:disable moodle.Files.RequireLogin.Missing
 // Let codechecker ignore the next line because otherwise it would complain about a missing login check
 // after requiring config.php which is really not needed.
 require(__DIR__ . '/../../config.php');
-// @codingStandardsIgnoreEnd
 
 // Require the session key - want to make sure that this isn't called
 // maliciously to keep a session alive longer than intended.
