@@ -47,7 +47,7 @@ if ($hassiteconfig) {
         $choices = [1 => 1, 2 => 2, 5 => 5, 10 => 10, 30 => 30, 60 => 60, 90 => 90,
                 120 => 120, 180 => 180, 240 => 240, 300 => 300, ];
         $sessionhandlingurl = new \core\url('/admin/settings.php', ['section' => 'sessionhandling']);
-        $link = \html_writer::link($sessionhandlingurl, get_string('sessionhandling', 'core_admin'));
+        $link = \core\output\html_writer::link($sessionhandlingurl, get_string('sessionhandling', 'core_admin'));
         $sessiontimeoutmin = floor(($CFG->sessiontimeout / 60));
         $sessiontimeoutwarningmin = floor(($CFG->sessiontimeoutwarning / 60));
         $page->add(new admin_setting_configselect('local_session_keepalive/keepaliveinterval',
