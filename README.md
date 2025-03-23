@@ -1,7 +1,7 @@
 moodle-local_session_keepalive
 ==============================
 
-[![Moodle Plugin CI](https://github.com/moodle-an-hochschulen/moodle-local_session_keepalive/workflows/Moodle%20Plugin%20CI/badge.svg?branch=MOODLE_403_STABLE)](https://github.com/moodle-an-hochschulen/moodle-local_session_keepalive/actions?query=workflow%3A%22Moodle+Plugin+CI%22+branch%3AMOODLE_403_STABLE)
+[![Moodle Plugin CI](https://github.com/moodle-an-hochschulen/moodle-local_session_keepalive/actions/workflows/moodle-plugin-ci.yml/badge.svg?branch=MOODLE_403_STABLE)](https://github.com/moodle-an-hochschulen/moodle-local_session_keepalive/actions?query=workflow%3A%22Moodle+Plugin+CI%22+branch%3AMOODLE_403_STABLE)
 
 Moodle plugin which checks for unsent user input in the browser and keeps the user session alive as long as needed to prevent that user input which is sent to the server after the user session has expired will be lost
 
