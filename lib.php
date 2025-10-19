@@ -36,17 +36,18 @@ function local_session_keepalive_extend_navigation(global_navigation $navigation
     // Check if the plugin's functionality is enabled.
     // We have to check explicitely if the configurations are set because this function will already be
     // called at installation time and would then throw PHP notices otherwise.
-    if (isset($config->enable) && $config->enable == true &&
-            isset($config->keepaliveinterval) && $config->keepaliveinterval > 0) {
-
+    if (
+        isset($config->enable) && $config->enable == true &&
+            isset($config->keepaliveinterval) && $config->keepaliveinterval > 0
+    ) {
         // Do only if there is an active session, because otherwise there is nothing we could keep alive.
         if ($USER->sesskey) {
-
             // Do only if the keepalive is configured to be run on any weekday and if the keepalive times are configured.
-            if (isset($config->keepaliveweekdays) && strpos($config->keepaliveweekdays, "1") !== false &&
+            if (
+                isset($config->keepaliveweekdays) && strpos($config->keepaliveweekdays, "1") !== false &&
                     isset($config->keepalivestart) && isset($config->keepalivestartmin) &&
-                    isset($config->keepaliveend) && isset($config->keepaliveendmin)) {
-
+                    isset($config->keepaliveend) && isset($config->keepaliveendmin)
+            ) {
                 // Get the time according to the server timezone.
                 $now = time();
                 $date = usergetdate($now);
@@ -54,15 +55,23 @@ function local_session_keepalive_extend_navigation(global_navigation $navigation
                 // Do only if the current server day is a configured keepalive day.
                 $keepalivetoday = substr($config->keepaliveweekdays, $date['wday'], 1);
                 if ($keepalivetoday == 1) {
-
                     // Do only if keepalive start time == keepalive end time (which is the meaning for the whole day) or
                     // if the current server time is within the configured keepalive times.
-                    $keepalivestart = make_timestamp($date['year'], $date['mon'], $date['mday'],
-                            $config->keepalivestart, $config->keepalivestartmin);
-                    $keepaliveend = make_timestamp($date['year'], $date['mon'], $date['mday'],
-                            $config->keepaliveend, $config->keepaliveendmin);
+                    $keepalivestart = make_timestamp(
+                        $date['year'],
+                        $date['mon'],
+                        $date['mday'],
+                        $config->keepalivestart,
+                        $config->keepalivestartmin
+                    );
+                    $keepaliveend = make_timestamp(
+                        $date['year'],
+                        $date['mon'],
+                        $date['mday'],
+                        $config->keepaliveend,
+                        $config->keepaliveendmin
+                    );
                     if (($keepalivestart == $keepaliveend) || ($now >= $keepalivestart && $now <= $keepaliveend)) {
-
                         // Insert the necessary JS code to the page.
                         $jsoptions = ['keepaliveinterval' => $config->keepaliveinterval];
                         $PAGE->requires->js_call_amd('local_session_keepalive/keepalive', 'init', [$jsoptions]);
