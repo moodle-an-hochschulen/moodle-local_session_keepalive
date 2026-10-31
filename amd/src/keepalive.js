@@ -39,14 +39,13 @@ define(['jquery', 'core/config', 'core/log'], function($, config, log) {
                 'Cache-Control': 'no-cache',
                 'Expires': '-1'
             },
-            /* This section exists for understanding the code, but it is commented because it does nothing.
             success: function(result) {
                 // The AJAX call was successful.
                 if (result.status == 200) {
-                    // Don't care about the result (especially as there isn't any result sent back).
+                    // Inform the developer, but don't do anything else.
+                    log.debug('moodle-local_session_keepalive-keepalive: The session was kept alive successfully');
                 }
             },
-            */
             error: function(request) {
                 // The AJAX call returned 403, we have to assume that the session was terminated and can't be kept alive anymore.
                 if (request.status == 403) {
