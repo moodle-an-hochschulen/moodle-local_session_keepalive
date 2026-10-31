@@ -4,6 +4,11 @@ moodle-local_session_keepalive
 Changes
 -------
 
+### Unreleased
+
+* 2026-10-31 - Improvement: Log a debug message to the browser console when the session was kept alive successfully.
+* 2026-10-31 - Bugfix: Return a valid JSON response from the keepalive endpoint as the client expects JSON.
+
 ### v5.2-r1
 
 * 2026-04-20 - Prepare compatibility for Moodle 5.2.

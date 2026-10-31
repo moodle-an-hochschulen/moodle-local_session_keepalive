@@ -36,3 +36,6 @@ require_sesskey();
 
 // Update the session.
 \core\session\manager::touch_session(session_id());
+
+// Send a valid JSON answer back, as the client expects a JSON response.
+echo json_encode(['status' => 200]);
