@@ -6,6 +6,7 @@ Changes
 
 ### Unreleased
 
+* 2026-11-01 - Improvement: Guard against an undefined $USER->sesskey to avoid PHP warnings for not-logged-in users.
 * 2026-10-31 - Improvement: Insert the keepalive JavaScript code with Moodle core's before_footer_html_generation output hook instead of abusing the *_extend_navigation() callback, so session keepalive is also active on pages which do not build the navigation.
 * 2026-10-31 - Improvement: Log a debug message to the browser console when the session was kept alive successfully.
 * 2026-10-31 - Bugfix: Return a valid JSON response from the keepalive endpoint as the client expects JSON.
