@@ -51,7 +51,7 @@ class before_footer_html_generation {
                 isset($config->keepaliveinterval) && $config->keepaliveinterval > 0
         ) {
             // Do only if there is an active session, because otherwise there is nothing we could keep alive.
-            if ($USER->sesskey) {
+            if (!empty($USER->sesskey)) {
                 // Do only if the keepalive is configured to be run on any weekday and if the keepalive times are configured.
                 if (
                     isset($config->keepaliveweekdays) && strpos($config->keepaliveweekdays, "1") !== false &&
