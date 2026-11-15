@@ -51,7 +51,7 @@ And with the "Keepalive interval" setting, you can set the interval (in minutes)
 
 ### 2. Advanced settings
 
-With the "Keepalive weekdays" and "Keepalive start/end time" settings, you can control the weekdays and the daytime when session keepalive should be active. By default, session keepalive will be active 24/7. However, if you are sure that you will never need session keepalive on certain weekdays or daytimes, you can limit session keepalive weekdays and daytimes to save the load on the server side.
+With the "Keepalive weekdays" and "Keepalive start/end time" settings, you can control the weekdays and the daytime when session keepalive should be active. By default, session keepalive will be active 24/7. However, if you are sure that you will never need session keepalive on certain weekdays or daytimes, you can limit session keepalive weekdays and daytimes to save the load on the server side. If the end time is earlier than the start time, the time slot spans midnight and belongs to the weekday on which it starts.
 
 
 Capabilities
