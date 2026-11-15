@@ -110,7 +110,9 @@ if ($hassiteconfig) {
             'local_session_keepalive/keepaliveend',
             'keepaliveendmin',
             get_string('setting_keepaliveend', 'local_session_keepalive', null, true),
-            get_string('setting_keepaliveend_desc', 'local_session_keepalive', null, true),
+            get_string('setting_keepaliveend_desc', 'local_session_keepalive', null, true) .
+                '<br />' .
+                get_string('setting_keepalivemidnightnote', 'local_session_keepalive', null, true),
             ['h' => 0, 'm' => 0]
         ));
     }
