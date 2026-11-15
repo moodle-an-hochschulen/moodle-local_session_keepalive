@@ -26,23 +26,22 @@ namespace local_session_keepalive\local\hook\output;
  */
 final class before_footer_html_generation_test extends \advanced_testcase {
     /**
-     * Test that the keepalive weekdays and the keepalive time slot are evaluated in the server timezone
-     * and not in the timezone of the current user.
+     * Test that the keepalive weekdays and the keepalive time slot are evaluated correctly, i.e.
+     * in the server timezone and not in the timezone of the current user, and
+     * with a time slot which spans midnight belonging to the weekday on which it starts.
      *
-     * @dataProvider server_timezone_provider
+     * @dataProvider keepalive_times_provider
      * @param bool $differentweekdays True if the server and the user should be on different weekdays (25 hours apart),
      *                                false if it should be noon in server time and midnight in user time.
-     * @param string $weekdays The keepalive weekdays as string of seven 0/1 flags, starting with sunday.
-     * @param string|null $serverweekdayflag The flag to be set for the current server weekday within the keepalive weekdays,
-     *                                       or null to leave the keepalive weekdays untouched.
+     * @param string $weekdays The keepalive weekdays relative to the current server weekday:
+     *                         'all', 'todayonly', 'allbuttoday' or 'yesterdayonly'.
      * @param int $starthour The hour of the keepalive start time.
      * @param int $endhour The hour of the keepalive end time.
      * @param bool $expected True if the keepalive is expected to be active.
      */
-    public function test_server_timezone(
+    public function test_keepalive_times(
         bool $differentweekdays,
         string $weekdays,
-        ?string $serverweekdayflag,
         int $starthour,
         int $endhour,
         bool $expected
@@ -84,12 +83,16 @@ final class before_footer_html_generation_test extends \advanced_testcase {
         // Make sure that the user has an active session key, otherwise the callback would do nothing at all.
         sesskey();
 
-        // Set the flag for the current server weekday, if requested.
-        // The current server weekday is only known at runtime, so it can't be part of the data provider.
-        if ($serverweekdayflag !== null) {
-            $serverweekday = (int) (new \DateTime('now', \core_date::get_server_timezone_object()))->format('w');
-            $weekdays = substr_replace($weekdays, $serverweekdayflag, $serverweekday, 1);
-        }
+        // Build the keepalive weekdays as string of seven 0/1 flags, starting with sunday.
+        // The current server weekday is only known at runtime, so the flags can't be part of the data provider.
+        $today = (int) (new \DateTime('now', \core_date::get_server_timezone_object()))->format('w');
+        $yesterday = ($today + 6) % 7;
+        $weekdays = match ($weekdays) {
+            'all' => '1111111',
+            'todayonly' => substr_replace('0000000', '1', $today, 1),
+            'allbuttoday' => substr_replace('1111111', '0', $today, 1),
+            'yesterdayonly' => substr_replace('0000000', '1', $yesterday, 1),
+        };
 
         // Enable the plugin with the given keepalive weekdays and keepalive time slot.
         set_config('enable', 1, 'local_session_keepalive');
@@ -112,42 +115,73 @@ final class before_footer_html_generation_test extends \advanced_testcase {
     }
 
     /**
-     * Data provider for test_server_timezone().
+     * Data provider for test_keepalive_times().
      *
      * @return array
      */
-    public static function server_timezone_provider(): array {
+    public static function keepalive_times_provider(): array {
         return [
             'Time slot matches server time only' => [
                 'differentweekdays' => false,
-                'weekdays' => '1111111',
-                'serverweekdayflag' => null,
+                'weekdays' => 'all',
                 'starthour' => 10,
                 'endhour' => 15,
                 'expected' => true,
             ],
             'Time slot matches user time only' => [
                 'differentweekdays' => false,
-                'weekdays' => '1111111',
-                'serverweekdayflag' => null,
+                'weekdays' => 'all',
                 'starthour' => 0,
                 'endhour' => 2,
                 'expected' => false,
             ],
             'Weekday matches server time only' => [
                 'differentweekdays' => true,
-                'weekdays' => '0000000',
-                'serverweekdayflag' => '1',
+                'weekdays' => 'todayonly',
                 'starthour' => 0,
                 'endhour' => 0,
                 'expected' => true,
             ],
             'Weekday matches user time only' => [
                 'differentweekdays' => true,
-                'weekdays' => '1111111',
-                'serverweekdayflag' => '0',
+                'weekdays' => 'allbuttoday',
                 'starthour' => 0,
                 'endhour' => 0,
+                'expected' => false,
+            ],
+            'Time slot spanning midnight, server time outside of it' => [
+                'differentweekdays' => false,
+                'weekdays' => 'all',
+                'starthour' => 14,
+                'endhour' => 11,
+                'expected' => false,
+            ],
+            'Time slot spanning midnight, started today, today enabled' => [
+                'differentweekdays' => false,
+                'weekdays' => 'todayonly',
+                'starthour' => 11,
+                'endhour' => 9,
+                'expected' => true,
+            ],
+            'Time slot spanning midnight, started today, yesterday enabled' => [
+                'differentweekdays' => false,
+                'weekdays' => 'yesterdayonly',
+                'starthour' => 11,
+                'endhour' => 9,
+                'expected' => false,
+            ],
+            'Time slot spanning midnight, started yesterday, yesterday enabled' => [
+                'differentweekdays' => false,
+                'weekdays' => 'yesterdayonly',
+                'starthour' => 16,
+                'endhour' => 14,
+                'expected' => true,
+            ],
+            'Time slot spanning midnight, started yesterday, today enabled' => [
+                'differentweekdays' => false,
+                'weekdays' => 'todayonly',
+                'starthour' => 16,
+                'endhour' => 14,
                 'expected' => false,
             ],
         ];

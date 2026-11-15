@@ -65,38 +65,61 @@ class before_footer_html_generation {
                     $now = time();
                     $date = usergetdate($now, $servertz);
 
-                    // Do only if the current server day is a configured keepalive day.
-                    $keepalivetoday = substr($config->keepaliveweekdays, $date['wday'], 1);
-                    if ($keepalivetoday == 1) {
-                        // Do only if keepalive start time == keepalive end time (which is the meaning for the whole day) or
+                    // Check if the current server day and the previous server day are configured keepalive days.
+                    $keepalivetoday = substr($config->keepaliveweekdays, $date['wday'], 1) == 1;
+                    $keepaliveyesterday = substr($config->keepaliveweekdays, ($date['wday'] + 6) % 7, 1) == 1;
+
+                    // Get the keepalive start time and the keepalive end time on the current server day.
+                    $keepalivestart = make_timestamp(
+                        $date['year'],
+                        $date['mon'],
+                        $date['mday'],
+                        $config->keepalivestart,
+                        $config->keepalivestartmin,
+                        0,
+                        $servertz
+                    );
+                    $keepaliveend = make_timestamp(
+                        $date['year'],
+                        $date['mon'],
+                        $date['mday'],
+                        $config->keepaliveend,
+                        $config->keepaliveendmin,
+                        0,
+                        $servertz
+                    );
+
+                    // If keepalive start time == keepalive end time (which is the meaning for the whole day).
+                    if ($keepalivestart == $keepaliveend) {
+                        // The keepalive is active if the current server day is a keepalive day.
+                        $keepaliveactive = $keepalivetoday;
+
+                        // Otherwise, if the keepalive start time is before the keepalive end time.
+                    } else if ($keepalivestart < $keepaliveend) {
+                        // The keepalive is active if the current server day is a keepalive day and
                         // if the current server time is within the configured keepalive times.
-                        $keepalivestart = make_timestamp(
-                            $date['year'],
-                            $date['mon'],
-                            $date['mday'],
-                            $config->keepalivestart,
-                            $config->keepalivestartmin,
-                            0,
-                            $servertz
+                        $keepaliveactive = $keepalivetoday && $now >= $keepalivestart && $now <= $keepaliveend;
+
+                        // Otherwise, if the keepalive start time is after the keepalive end time
+                        // (which means that the keepalive time slot spans midnight).
+                    } else {
+                        // The keepalive time slot belongs to the day on which it starts.
+                        // Thus, the keepalive is active if the current server day is a keepalive day and the time slot
+                        // has started today, or if the previous server day is a keepalive day and the time slot which
+                        // started yesterday has not ended yet.
+                        $keepaliveactive = ($keepalivetoday && $now >= $keepalivestart) ||
+                                ($keepaliveyesterday && $now <= $keepaliveend);
+                    }
+
+                    // Do only if the keepalive is active now.
+                    if ($keepaliveactive) {
+                        // Insert the necessary JS code to the page.
+                        $jsoptions = ['keepaliveinterval' => $config->keepaliveinterval];
+                        $hook->renderer->get_page()->requires->js_call_amd(
+                            'local_session_keepalive/keepalive',
+                            'init',
+                            [$jsoptions]
                         );
-                        $keepaliveend = make_timestamp(
-                            $date['year'],
-                            $date['mon'],
-                            $date['mday'],
-                            $config->keepaliveend,
-                            $config->keepaliveendmin,
-                            0,
-                            $servertz
-                        );
-                        if (($keepalivestart == $keepaliveend) || ($now >= $keepalivestart && $now <= $keepaliveend)) {
-                            // Insert the necessary JS code to the page.
-                            $jsoptions = ['keepaliveinterval' => $config->keepaliveinterval];
-                            $hook->renderer->get_page()->requires->js_call_amd(
-                                'local_session_keepalive/keepalive',
-                                'init',
-                                [$jsoptions]
-                            );
-                        }
                     }
                 }
             }
