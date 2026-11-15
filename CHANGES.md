@@ -4,6 +4,10 @@ moodle-local_session_keepalive
 Changes
 -------
 
+### Unreleased
+
+* 2026-11-15 - Bugfix: Evaluate the configured keepalive weekdays and the keepalive time slot in the server timezone as documented, instead of in the timezone of the current user.
+
 ### v5.1-r2
 
 * 2026-11-01 - Improvement: Guard against an undefined $USER->sesskey to avoid PHP warnings for not-logged-in users.
