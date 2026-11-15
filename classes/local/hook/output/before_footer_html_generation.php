@@ -59,8 +59,11 @@ class before_footer_html_generation {
                         isset($config->keepaliveend) && isset($config->keepaliveendmin)
                 ) {
                     // Get the time according to the server timezone.
+                    // The timezone has to be passed explicitly as usergetdate() and make_timestamp() would use
+                    // the timezone of the current user otherwise.
+                    $servertz = \core_date::get_server_timezone();
                     $now = time();
-                    $date = usergetdate($now);
+                    $date = usergetdate($now, $servertz);
 
                     // Do only if the current server day is a configured keepalive day.
                     $keepalivetoday = substr($config->keepaliveweekdays, $date['wday'], 1);
@@ -72,14 +75,18 @@ class before_footer_html_generation {
                             $date['mon'],
                             $date['mday'],
                             $config->keepalivestart,
-                            $config->keepalivestartmin
+                            $config->keepalivestartmin,
+                            0,
+                            $servertz
                         );
                         $keepaliveend = make_timestamp(
                             $date['year'],
                             $date['mon'],
                             $date['mday'],
                             $config->keepaliveend,
-                            $config->keepaliveendmin
+                            $config->keepaliveendmin,
+                            0,
+                            $servertz
                         );
                         if (($keepalivestart == $keepaliveend) || ($now >= $keepalivestart && $now <= $keepaliveend)) {
                             // Insert the necessary JS code to the page.
