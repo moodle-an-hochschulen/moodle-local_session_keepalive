@@ -6,6 +6,7 @@ Changes
 
 ### Unreleased
 
+* 2026-11-15 - Bugfix: Support keepalive time slots which span midnight (i.e. where the end time is earlier than the start time). Up to now, session keepalive was silently never active with such a configuration. Such a time slot belongs to the weekday on which it starts.
 * 2026-11-15 - Bugfix: Evaluate the configured keepalive weekdays and the keepalive time slot in the server timezone as documented, instead of in the timezone of the current user.
 
 ### v4.5-r3
