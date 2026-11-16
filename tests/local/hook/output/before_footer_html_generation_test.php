@@ -186,4 +186,107 @@ final class before_footer_html_generation_test extends \advanced_testcase {
             ],
         ];
     }
+
+    /**
+     * Test that the keepalive is only run for guests and not-logged-in users if the admin enabled it for them,
+     * and that it is always run for logged-in users.
+     *
+     * @dataProvider keepalive_guests_provider
+     * @param string $usertype The type of the current user: 'loggedin', 'guest' or 'notloggedin'.
+     * @param int|null $keepaliveguests The value of the keepaliveguests setting, or null if the setting is not set yet.
+     * @param bool $expected True if the keepalive is expected to be active.
+     */
+    public function test_keepalive_guests(string $usertype, ?int $keepaliveguests, bool $expected): void {
+        global $PAGE;
+
+        $this->resetAfterTest();
+
+        // Set the current user.
+        if ($usertype == 'loggedin') {
+            $this->setUser($this->getDataGenerator()->create_user());
+        } else if ($usertype == 'guest') {
+            $this->setGuestUser();
+        } else {
+            $this->setUser(null);
+        }
+
+        // Make sure that the user has an active session key, just as on each rendered page.
+        sesskey();
+
+        // Enable the plugin on all weekdays and during the whole day.
+        set_config('enable', 1, 'local_session_keepalive');
+        set_config('keepaliveinterval', 10, 'local_session_keepalive');
+        set_config('keepaliveweekdays', '1111111', 'local_session_keepalive');
+        set_config('keepalivestart', 0, 'local_session_keepalive');
+        set_config('keepalivestartmin', 0, 'local_session_keepalive');
+        set_config('keepaliveend', 0, 'local_session_keepalive');
+        set_config('keepaliveendmin', 0, 'local_session_keepalive');
+
+        // Set the keepaliveguests setting, or make sure that it is not set at all.
+        if ($keepaliveguests !== null) {
+            set_config('keepaliveguests', $keepaliveguests, 'local_session_keepalive');
+        } else {
+            unset_config('keepaliveguests', 'local_session_keepalive');
+        }
+
+        // Run the hook callback.
+        $PAGE->set_url('/');
+        $PAGE->set_context(\context_system::instance());
+        $hook = new \core\hook\output\before_footer_html_generation($PAGE->get_renderer('core'));
+        before_footer_html_generation::callback($hook);
+
+        // Check if the keepalive JS code was added to the page.
+        $keepaliveadded = str_contains($PAGE->requires->get_end_code(), 'local_session_keepalive/keepalive');
+        $this->assertSame($expected, $keepaliveadded);
+    }
+
+    /**
+     * Data provider for test_keepalive_guests().
+     *
+     * @return array
+     */
+    public static function keepalive_guests_provider(): array {
+        return [
+            'Logged-in user, setting enabled' => [
+                'usertype' => 'loggedin',
+                'keepaliveguests' => 1,
+                'expected' => true,
+            ],
+            'Logged-in user, setting disabled' => [
+                'usertype' => 'loggedin',
+                'keepaliveguests' => 0,
+                'expected' => true,
+            ],
+            'Guest user, setting enabled' => [
+                'usertype' => 'guest',
+                'keepaliveguests' => 1,
+                'expected' => true,
+            ],
+            'Guest user, setting disabled' => [
+                'usertype' => 'guest',
+                'keepaliveguests' => 0,
+                'expected' => false,
+            ],
+            'Guest user, setting not set yet' => [
+                'usertype' => 'guest',
+                'keepaliveguests' => null,
+                'expected' => false,
+            ],
+            'Not-logged-in user, setting enabled' => [
+                'usertype' => 'notloggedin',
+                'keepaliveguests' => 1,
+                'expected' => true,
+            ],
+            'Not-logged-in user, setting disabled' => [
+                'usertype' => 'notloggedin',
+                'keepaliveguests' => 0,
+                'expected' => false,
+            ],
+            'Not-logged-in user, setting not set yet' => [
+                'usertype' => 'notloggedin',
+                'keepaliveguests' => null,
+                'expected' => false,
+            ],
+        ];
+    }
 }
