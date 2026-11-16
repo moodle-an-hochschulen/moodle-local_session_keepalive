@@ -34,6 +34,15 @@ require(__DIR__ . '/../../config.php');
 // maliciously to keep a session alive longer than intended.
 require_sesskey();
 
+// Guests and not-logged-in users only get the keepalive if the admin enabled it for them.
+// Otherwise, answer with a 403 status which tells the client to stop doing any more keepalive requests.
+// This way, pages which were loaded before the setting was disabled stop their keepalive requests as well.
+if ((!isloggedin() || isguestuser()) && get_config('local_session_keepalive', 'keepaliveguests') != true) {
+    http_response_code(403);
+    echo json_encode(['status' => 403]);
+    die;
+}
+
 // Update the session.
 \core\session\manager::touch_session(session_id());
 
