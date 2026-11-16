@@ -50,8 +50,17 @@ class before_footer_html_generation {
             isset($config->enable) && $config->enable == true &&
                 isset($config->keepaliveinterval) && $config->keepaliveinterval > 0
         ) {
-            // Do only if there is an active session, because otherwise there is nothing we could keep alive.
-            if (!empty($USER->sesskey)) {
+            // Check if the keepalive should be run for the current user.
+            // Really logged-in users always get the keepalive. Guests and not-logged-in users have a session which can
+            // expire as well, but they only get the keepalive if the admin enabled it for them.
+            // If the configuration is not set yet, guests and not-logged-in users do not get the keepalive as this is the default.
+            $keepaliveguests = isset($config->keepaliveguests) && $config->keepaliveguests == true;
+            $keepaliveuser = (isloggedin() && !isguestuser()) || $keepaliveguests;
+
+            // Do only if the keepalive should be run for the current user and if the session key is already set.
+            // Please note that the session key is not an indicator for a logged-in user as Moodle core generates it for each
+            // session as soon as a page is rendered. It is just checked here to avoid PHP warnings if it is not set yet.
+            if ($keepaliveuser && !empty($USER->sesskey)) {
                 // Do only if the keepalive is configured to be run on any weekday and if the keepalive times are configured.
                 if (
                     isset($config->keepaliveweekdays) && strpos($config->keepaliveweekdays, "1") !== false &&
