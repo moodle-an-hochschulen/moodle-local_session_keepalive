@@ -6,6 +6,9 @@ Changes
 
 ### Unreleased
 
+* 2026-11-16 - Docs: Update the description of the similar mechanism in Moodle core in the README, as the mentioned YUI module and AJAX script were removed from Moodle core in Moodle 3.8 already (see MDL-34498).
+* 2026-11-16 - Improvement: Let the keepalive endpoint reject requests from guests and not-logged-in users as long as session keepalive is not enabled for them, so pages which were loaded before the setting was disabled stop their keepalive requests as well.
+* 2026-11-16 - Improvement: Add a setting to control if session keepalive should also be active for guests and not-logged-in users. The setting is disabled by default. Please note that this changes the existing behaviour: Up to now, session keepalive was also active for guests and not-logged-in users. If you rely on that, please enable the new setting after the upgrade.
 * 2026-11-15 - Bugfix: Support keepalive time slots which span midnight (i.e. where the end time is earlier than the start time). Up to now, session keepalive was silently never active with such a configuration. Such a time slot belongs to the weekday on which it starts.
 * 2026-11-15 - Bugfix: Evaluate the configured keepalive weekdays and the keepalive time slot in the server timezone as documented, instead of in the timezone of the current user.
 
