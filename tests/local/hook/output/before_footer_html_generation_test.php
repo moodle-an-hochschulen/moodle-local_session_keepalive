@@ -1,0 +1,292 @@
+<?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+namespace local_session_keepalive\local\hook\output;
+
+/**
+ * Local plugin "Session keepalive" - Tests for the before_footer_html_generation hook callback.
+ *
+ * @package   local_session_keepalive
+ * @copyright 2026 Alexander Bias <bias@alexanderbias.de>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers    \local_session_keepalive\local\hook\output\before_footer_html_generation
+ */
+final class before_footer_html_generation_test extends \advanced_testcase {
+    /**
+     * Test that the keepalive weekdays and the keepalive time slot are evaluated correctly, i.e.
+     * in the server timezone and not in the timezone of the current user, and
+     * with a time slot which spans midnight belonging to the weekday on which it starts.
+     *
+     * @dataProvider keepalive_times_provider
+     * @param bool $differentweekdays True if the server and the user should be on different weekdays (25 hours apart),
+     *                                false if it should be noon in server time and midnight in user time.
+     * @param string $weekdays The keepalive weekdays relative to the current server weekday:
+     *                         'all', 'todayonly', 'allbuttoday' or 'yesterdayonly'.
+     * @param int $starthour The hour of the keepalive start time.
+     * @param int $endhour The hour of the keepalive end time.
+     * @param bool $expected True if the keepalive is expected to be active.
+     */
+    public function test_keepalive_times(
+        bool $differentweekdays,
+        string $weekdays,
+        int $starthour,
+        int $endhour,
+        bool $expected
+    ): void {
+        global $PAGE;
+
+        $this->resetAfterTest();
+
+        // Pick the server timezone and the user timezone, both as offset to UTC in hours.
+        // As the callback uses the real current time, the timezones are picked relative to the current time.
+        // This way, the test is deterministic regardless of the time when it is run.
+        if ($differentweekdays) {
+            // These two timezones (UTC-12 and UTC+13) are 25 hours apart,
+            // so the server weekday and the user weekday always differ.
+            $serveroffset = -12;
+            $useroffset = 13;
+        } else {
+            // It is currently between 12:00 and 12:59 in server time and between 0:00 and 0:59 in user time.
+            $serveroffset = 12 - (int) gmdate('G');
+            $useroffset = ($serveroffset > 0) ? $serveroffset - 12 : $serveroffset + 12;
+        }
+
+        // Set the server timezone.
+        // Please note that the sign of the Etc/GMT timezones is inverted, i.e. Etc/GMT-2 is UTC+2.
+        if ($serveroffset > 0) {
+            $servertimezone = 'Etc/GMT-' . $serveroffset;
+        } else if ($serveroffset < 0) {
+            $servertimezone = 'Etc/GMT+' . abs($serveroffset);
+        } else {
+            $servertimezone = 'Etc/GMT';
+        }
+        $this->setTimezone($servertimezone, $servertimezone);
+
+        // Log in as a user with the user timezone.
+        // The timezone is set as numeric offset as the Etc/GMT timezone names are not accepted as user timezone.
+        $user = $this->getDataGenerator()->create_user(['timezone' => (string) $useroffset]);
+        $this->setUser($user);
+
+        // Make sure that the user has an active session key, otherwise the callback would do nothing at all.
+        sesskey();
+
+        // Build the keepalive weekdays as string of seven 0/1 flags, starting with sunday.
+        // The current server weekday is only known at runtime, so the flags can't be part of the data provider.
+        $today = (int) (new \DateTime('now', \core_date::get_server_timezone_object()))->format('w');
+        $yesterday = ($today + 6) % 7;
+        $weekdays = match ($weekdays) {
+            'all' => '1111111',
+            'todayonly' => substr_replace('0000000', '1', $today, 1),
+            'allbuttoday' => substr_replace('1111111', '0', $today, 1),
+            'yesterdayonly' => substr_replace('0000000', '1', $yesterday, 1),
+        };
+
+        // Enable the plugin with the given keepalive weekdays and keepalive time slot.
+        set_config('enable', 1, 'local_session_keepalive');
+        set_config('keepaliveinterval', 10, 'local_session_keepalive');
+        set_config('keepaliveweekdays', $weekdays, 'local_session_keepalive');
+        set_config('keepalivestart', $starthour, 'local_session_keepalive');
+        set_config('keepalivestartmin', 0, 'local_session_keepalive');
+        set_config('keepaliveend', $endhour, 'local_session_keepalive');
+        set_config('keepaliveendmin', 0, 'local_session_keepalive');
+
+        // Run the hook callback.
+        $PAGE->set_url('/');
+        $PAGE->set_context(\context_system::instance());
+        $hook = new \core\hook\output\before_footer_html_generation($PAGE->get_renderer('core'));
+        before_footer_html_generation::callback($hook);
+
+        // Check if the keepalive JS code was added to the page.
+        $keepaliveadded = str_contains($PAGE->requires->get_end_code(), 'local_session_keepalive/keepalive');
+        $this->assertSame($expected, $keepaliveadded);
+    }
+
+    /**
+     * Data provider for test_keepalive_times().
+     *
+     * @return array
+     */
+    public static function keepalive_times_provider(): array {
+        return [
+            'Time slot matches server time only' => [
+                'differentweekdays' => false,
+                'weekdays' => 'all',
+                'starthour' => 10,
+                'endhour' => 15,
+                'expected' => true,
+            ],
+            'Time slot matches user time only' => [
+                'differentweekdays' => false,
+                'weekdays' => 'all',
+                'starthour' => 0,
+                'endhour' => 2,
+                'expected' => false,
+            ],
+            'Weekday matches server time only' => [
+                'differentweekdays' => true,
+                'weekdays' => 'todayonly',
+                'starthour' => 0,
+                'endhour' => 0,
+                'expected' => true,
+            ],
+            'Weekday matches user time only' => [
+                'differentweekdays' => true,
+                'weekdays' => 'allbuttoday',
+                'starthour' => 0,
+                'endhour' => 0,
+                'expected' => false,
+            ],
+            'Time slot spanning midnight, server time outside of it' => [
+                'differentweekdays' => false,
+                'weekdays' => 'all',
+                'starthour' => 14,
+                'endhour' => 11,
+                'expected' => false,
+            ],
+            'Time slot spanning midnight, started today, today enabled' => [
+                'differentweekdays' => false,
+                'weekdays' => 'todayonly',
+                'starthour' => 11,
+                'endhour' => 9,
+                'expected' => true,
+            ],
+            'Time slot spanning midnight, started today, yesterday enabled' => [
+                'differentweekdays' => false,
+                'weekdays' => 'yesterdayonly',
+                'starthour' => 11,
+                'endhour' => 9,
+                'expected' => false,
+            ],
+            'Time slot spanning midnight, started yesterday, yesterday enabled' => [
+                'differentweekdays' => false,
+                'weekdays' => 'yesterdayonly',
+                'starthour' => 16,
+                'endhour' => 14,
+                'expected' => true,
+            ],
+            'Time slot spanning midnight, started yesterday, today enabled' => [
+                'differentweekdays' => false,
+                'weekdays' => 'todayonly',
+                'starthour' => 16,
+                'endhour' => 14,
+                'expected' => false,
+            ],
+        ];
+    }
+
+    /**
+     * Test that the keepalive is only run for guests and not-logged-in users if the admin enabled it for them,
+     * and that it is always run for logged-in users.
+     *
+     * @dataProvider keepalive_guests_provider
+     * @param string $usertype The type of the current user: 'loggedin', 'guest' or 'notloggedin'.
+     * @param int|null $keepaliveguests The value of the keepaliveguests setting, or null if the setting is not set yet.
+     * @param bool $expected True if the keepalive is expected to be active.
+     */
+    public function test_keepalive_guests(string $usertype, ?int $keepaliveguests, bool $expected): void {
+        global $PAGE;
+
+        $this->resetAfterTest();
+
+        // Set the current user.
+        if ($usertype == 'loggedin') {
+            $this->setUser($this->getDataGenerator()->create_user());
+        } else if ($usertype == 'guest') {
+            $this->setGuestUser();
+        } else {
+            $this->setUser(null);
+        }
+
+        // Make sure that the user has an active session key, just as on each rendered page.
+        sesskey();
+
+        // Enable the plugin on all weekdays and during the whole day.
+        set_config('enable', 1, 'local_session_keepalive');
+        set_config('keepaliveinterval', 10, 'local_session_keepalive');
+        set_config('keepaliveweekdays', '1111111', 'local_session_keepalive');
+        set_config('keepalivestart', 0, 'local_session_keepalive');
+        set_config('keepalivestartmin', 0, 'local_session_keepalive');
+        set_config('keepaliveend', 0, 'local_session_keepalive');
+        set_config('keepaliveendmin', 0, 'local_session_keepalive');
+
+        // Set the keepaliveguests setting, or make sure that it is not set at all.
+        if ($keepaliveguests !== null) {
+            set_config('keepaliveguests', $keepaliveguests, 'local_session_keepalive');
+        } else {
+            unset_config('keepaliveguests', 'local_session_keepalive');
+        }
+
+        // Run the hook callback.
+        $PAGE->set_url('/');
+        $PAGE->set_context(\context_system::instance());
+        $hook = new \core\hook\output\before_footer_html_generation($PAGE->get_renderer('core'));
+        before_footer_html_generation::callback($hook);
+
+        // Check if the keepalive JS code was added to the page.
+        $keepaliveadded = str_contains($PAGE->requires->get_end_code(), 'local_session_keepalive/keepalive');
+        $this->assertSame($expected, $keepaliveadded);
+    }
+
+    /**
+     * Data provider for test_keepalive_guests().
+     *
+     * @return array
+     */
+    public static function keepalive_guests_provider(): array {
+        return [
+            'Logged-in user, setting enabled' => [
+                'usertype' => 'loggedin',
+                'keepaliveguests' => 1,
+                'expected' => true,
+            ],
+            'Logged-in user, setting disabled' => [
+                'usertype' => 'loggedin',
+                'keepaliveguests' => 0,
+                'expected' => true,
+            ],
+            'Guest user, setting enabled' => [
+                'usertype' => 'guest',
+                'keepaliveguests' => 1,
+                'expected' => true,
+            ],
+            'Guest user, setting disabled' => [
+                'usertype' => 'guest',
+                'keepaliveguests' => 0,
+                'expected' => false,
+            ],
+            'Guest user, setting not set yet' => [
+                'usertype' => 'guest',
+                'keepaliveguests' => null,
+                'expected' => false,
+            ],
+            'Not-logged-in user, setting enabled' => [
+                'usertype' => 'notloggedin',
+                'keepaliveguests' => 1,
+                'expected' => true,
+            ],
+            'Not-logged-in user, setting disabled' => [
+                'usertype' => 'notloggedin',
+                'keepaliveguests' => 0,
+                'expected' => false,
+            ],
+            'Not-logged-in user, setting not set yet' => [
+                'usertype' => 'notloggedin',
+                'keepaliveguests' => null,
+                'expected' => false,
+            ],
+        ];
+    }
+}

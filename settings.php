@@ -110,8 +110,18 @@ if ($hassiteconfig) {
             'local_session_keepalive/keepaliveend',
             'keepaliveendmin',
             get_string('setting_keepaliveend', 'local_session_keepalive', null, true),
-            get_string('setting_keepaliveend_desc', 'local_session_keepalive', null, true),
+            get_string('setting_keepaliveend_desc', 'local_session_keepalive', null, true) .
+                '<br />' .
+                get_string('setting_keepalivemidnightnote', 'local_session_keepalive', null, true),
             ['h' => 0, 'm' => 0]
+        ));
+
+        // Create keepalive guests control widget.
+        $page->add(new admin_setting_configcheckbox(
+            'local_session_keepalive/keepaliveguests',
+            get_string('setting_keepaliveguests', 'local_session_keepalive', null, true),
+            get_string('setting_keepaliveguests_desc', 'local_session_keepalive', null, true),
+            0
         ));
     }
 
