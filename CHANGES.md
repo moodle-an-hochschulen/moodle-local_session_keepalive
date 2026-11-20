@@ -4,7 +4,7 @@ moodle-local_session_keepalive
 Changes
 -------
 
-### Unreleased
+### v5.2-r3
 
 * 2026-11-16 - Docs: Update the description of the similar mechanism in Moodle core in the README, as the mentioned YUI module and AJAX script were removed from Moodle core in Moodle 3.8 already (see MDL-34498).
 * 2026-11-16 - Improvement: Let the keepalive endpoint reject requests from guests and not-logged-in users as long as session keepalive is not enabled for them, so pages which were loaded before the setting was disabled stop their keepalive requests as well.
